@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Comprehensive Guide to Digital Fraud Prevention | 2025 Edition</title>
+    <style>
+        /* --- CORE VARIABLES & RESET --- */
+        :root {
+            --bg-body: #ffffff;
+            --bg-panel: #f4f4f5;
+            --bg-element: #e4e4e7;
+            --text-main: #18181b;
+            --text-muted: #71717a;
+            --accent: #2563eb;
+            --accent-dark: #1d4ed8;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --msg-sent: #2563eb;
+            --msg-sent-text: #ffffff;
+            --msg-rcvd: #e4e4e7;
+            --msg-rcvd-text: #18181b;
+            --font-stack: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-body: #09090b;
+                --bg-panel: #18181b;
+                --bg-element: #27272a;
+                --text-main: #f4f4f5;
+                --text-muted: #a1a1aa;
+                --msg-sent: #3b82f6;
+                --msg-rcvd: #27272a;
+                --msg-rcvd-text: #f4f4f5;
+            }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-stack); }
+        body { background: var(--bg-body); color: var(--text-main); height: 100vh; overflow: hidden; line-height: 1.6; }
+        
+        /* --- UTILITIES --- */
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-between { justify-content: space-between; }
+        .gap-2 { gap: 0.5rem; }
+        
+        button { cursor: pointer; border: none; outline: none; transition: 0.2s; }
+        input, textarea, select { background: var(--bg-element); color: var(--text-main); border: 1px solid transparent; padding: 10px; border-radius: 6px; width: 100%; outline: none; }
+        input:focus, textarea:focus { border-color: var(--accent); }
+
+        .btn { padding: 8px 16px; border-radius: 6px; font-weight: 600; background: var(--accent); color: white; }
+        .btn:hover { background: var(--accent-dark); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-ghost { background: transparent; color: var(--text-muted); }
+        .btn-ghost:hover { background: var(--bg-element); color: var(--text-main); }
+        .icon-btn { padding: 8px; border-radius: 50%; background: transparent; font-size: 1.2rem; }
+        .icon-btn:hover { background: var(--bg-element); }
+
+        /* --- LANDING PAGE (BLOG) --- */
+        #landing-page { height: 100vh; overflow-y: scroll; padding: 40px 20px; max-width: 900px; margin: 0 auto; }
+        .blog-header { font-size: 2.5rem; font-weight: 800; margin-bottom: 10px; line-height: 1.2; }
+        .blog-meta { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 40px; border-bottom: 1px solid var(--bg-element); padding-bottom: 20px; }
+        .blog-content p { margin-bottom: 24px; font-size: 1.1rem; text-align: justify; }
+        .blog-content h2 { margin-top: 40px; margin-bottom: 20px; font-size: 1.8rem; color: var(--text-main); }
+        
+        /* THE STEALTH TRIGGER */
+        .stealth-link { 
+            color: inherit; 
+            text-decoration: none; 
+            cursor: text; 
+        }
+
+        /* --- MODALS --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+        .modal-card { background: var(--bg-panel); padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .captcha-box { font-family: 'Courier New', monospace; font-size: 2rem; letter-spacing: 8px; background: var(--bg-element); padding: 15px; text-align: center; margin: 20px 0; border-radius: 8px; user-select: none; opacity: 0.7; }
+        
+        /* --- APP LAYOUT --- */
+        #app-container { display: flex; height: 100vh; width: 100vw; }
+        
+        /* SIDEBAR */
+        .sidebar { width: 350px; background: var(--bg-panel); border-right: 1px solid var(--bg-element); display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--bg-element); }
+        .user-card { display: flex; align-items: center; gap: 10px; margin-top: 15px; padding: 10px; background: var(--bg-element); border-radius: 8px; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0;}
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--success); display: inline-block; }
+        
+        .chat-list { flex: 1; overflow-y: auto; padding: 10px; }
+        .chat-item { padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 12px; margin-bottom: 4px; transition: 0.2s; }
+        .chat-item:hover { background: var(--bg-element); }
+        .chat-item.active { background: var(--bg-element); border-left: 3px solid var(--accent); }
+        .chat-preview { font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; }
+
+        /* CHAT AREA */
+        .chat-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-body); position: relative; }
+        .chat-nav { padding: 15px 20px; border-bottom: 1px solid var(--bg-element); display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); }
+        .messages-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+        
+        .message { max-width: 70%; padding: 10px 16px; border-radius: 18px; position: relative; word-wrap: break-word; group: relative;}
+        .message.new-anim { animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .msg-sent { align-self: flex-end; background: var(--msg-sent); color: var(--msg-sent-text); border-bottom-right-radius: 2px; }
+        .msg-rcvd { align-self: flex-start; background: var(--msg-rcvd); color: var(--msg-rcvd-text); border-bottom-left-radius: 2px; }
+        .msg-meta { font-size: 0.7rem; margin-top: 4px; opacity: 0.8; text-align: right; display: flex; justify-content: flex-end; gap: 5px; align-items: center; }
+        
+        .delete-btn { 
+            opacity: 0; 
+            position: absolute; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            cursor: pointer; 
+            font-size: 1rem; 
+            transition: 0.2s; 
+            background: var(--bg-panel); 
+            border-radius: 50%; 
+            padding: 5px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .message:hover .delete-btn { opacity: 1; }
+        .msg-sent .delete-btn { left: -35px; }
+        .msg-rcvd .delete-btn { right: -35px; }
+
+        .admin-deleted {
+            background: #fee2e2 !important;
+            color: #991b1b !important;
+            border: 1px dashed var(--danger);
+        }
+        .dark .admin-deleted {
+            background: #450a0a !important;
+            color: #fca5a5 !important;
+        }
+
+        .input-zone { padding: 20px; background: var(--bg-panel); border-top: 1px solid var(--bg-element); }
+        .toolbar { display: flex; gap: 10px; margin-bottom: 10px; }
+        
+        /* ADMIN DASHBOARD */
+        #admin-dashboard { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 500; padding: 40px; overflow-y: auto; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 20px 0; }
+        .stat-box { background: var(--bg-panel); padding: 20px; border-radius: 10px; text-align: center; }
+        .stat-num { font-size: 2.5rem; font-weight: 800; color: var(--accent); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--bg-element); }
+        
+        .chat-manage-item {
+            display: flex; justify-content: space-between; align-items: center; 
+            background: var(--bg-element); padding: 10px; margin-bottom: 5px; border-radius: 6px;
+        }
+
+        .mobile-only { display: none; }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 768px) {
+            .mobile-only { display: block; }
+            .sidebar { position: absolute; left: 0; top: 0; height: 100%; width: 85%; z-index: 100; transform: translateX(-100%); transition: 0.3s; }
+            .sidebar.show { transform: translateX(0); }
+            .message { max-width: 85%; }
+        }
+        
+        .active-recording { color: var(--danger); animation: pulse 1s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<!-- LANDING PAGE -->
+<div id="landing-page">
+    <h1 class="blog-header">The Anatomy of Digital Deception: A Comprehensive Analysis of Modern Cyber Fraud</h1>
+    <div class="blog-meta">Published on November 22, 2025 • By Dr. A. Security • 25 Min Read</div>
+    
+    <div class="blog-content">
+        <p>In the labyrinthine expanse of the digital age, the proliferation of cybernetic fraud has evolved from rudimentary email phishing to sophisticated, multi-layered social engineering attacks. As we navigate this complex terrain, it becomes imperative to understand the underlying mechanisms that perpetrators employ to exploit human psychology and technological vulnerabilities. This article aims to dissect the anatomy of these scams, offering a granular view of the threat landscape that defines our current cybersecurity epoch.</p>
+        <h2>The Evolution of Phishing</h2>
+        <p>Historically, phishing was a game of numbers—a wide net cast in hopes of ensnaring a few unsuspecting victims. However, the paradigm has shifted towards 'spear-phishing,' a targeted approach that leverages publicly available data to craft hyper-personalized narratives. These attacks are no longer riddled with grammatical errors; they are polished, professional, and often indistinguishable from legitimate correspondence.</p>
+        <p>Consider the case of Business Email Compromise (BEC). Here, attackers do not merely steal credentials; they study the organizational hierarchy, replicate communication styles, and strike when vulnerability is highest. The financial implications are staggering, running into billions annually. The defense against such threats requires more than just firewalls; it demands a culture of skepticism and verification.</p>
+        <h2>The Psychology of Trust</h2>
+        <p>At the core of every successful scam lies the manipulation of <a href="#" onclick="event.preventDefault(); openLoginModal()" class="stealth-link">Trusted</a> relationships. Scammers are adept at creating a sense of urgency or authority. By inducing a state of panic—"Your account has been compromised"—they bypass the logical centers of the brain, forcing a reactive emotional response. This psychological hijacking is the linchpin of social engineering.</p>
+        <p>Furthermore, the 'romance scam' or 'pig butchering' schemes exploit the human need for connection. These are long-con operations where trust is built over months before the trap is sprung. The devastation is not just financial but deeply emotional, leaving victims with a profound sense of betrayal.</p>
+        <p>End of Report.</p>
+    </div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div id="login-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h2 style="text-align:center; margin-bottom: 20px;">Secure Gateway</h2>
+        <div id="captcha-phase">
+            <div id="captcha-display" class="captcha-box"></div>
+            <input type="text" id="captcha-input" placeholder="Enter code shown above">
+            <button class="btn" style="width:100%; margin-top:15px;" onclick="verifyCaptcha()">Verify Integrity</button>
+        </div>
+        <div id="login-phase" class="hidden">
+            <div class="flex-col gap-2">
+                <input type="text" id="login-user" placeholder="User ID">
+                <input type="password" id="login-pass" placeholder="Password">
+                <div id="2fa-div" class="hidden">
+                    <input type="text" id="login-2fa" placeholder="2FA Token">
+                </div>
+                <button class="btn" style="width:100%; margin-top:10px;" onclick="attemptLogin()">Authenticate</button>
+            </div>
+        </div>
+        <button class="btn-ghost" style="width:100%; margin-top:10px;" onclick="closeModal()">Cancel</button>
+    </div>
+</div>
+
+<!-- NEW CHAT MODAL -->
+<div id="user-select-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3>Start New Conversation</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">To preserve privacy, you must know the exact User ID of the recipient.</p>
+        <div class="flex-col gap-2">
+            <input type="text" id="target-user-input" placeholder="Enter User ID (e.g. user2)" onkeydown="if(event.key==='Enter') handleNewChatSubmit()">
+            <button class="btn" onclick="handleNewChatSubmit()">Connect</button>
+        </div>
+        <button class="btn-ghost" style="width:100%; margin-top: 10px;" onclick="document.getElementById('user-select-modal').classList.add('hidden')">Cancel</button>
+    </div>
+</div>
+
+<!-- ADMIN EDIT USER MODAL -->
+<div id="edit-user-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+        <h3>Edit User Details</h3>
+        <input type="hidden" id="edit-original-id">
+        <div class="flex-col gap-2" style="margin-top:15px; border-bottom: 1px solid var(--bg-element); padding-bottom: 20px;">
+            <label style="font-size:0.8rem; color:var(--text-muted)">User ID (Username)</label>
+            <input type="text" id="edit-user-id">
+            
+            <label style="font-size:0.8rem; color:var(--text-muted)">Display Name</label>
+            <input type="text" id="edit-user-name">
+            
+            <label style="font-size:0.8rem; color:var(--text-muted)">Password</label>
+            <input type="text" id="edit-user-pass">
+            
+            <button class="btn" onclick="saveEditedUser()">Save Changes</button>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <h4>Active Conversations</h4>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;">Remove people from this user's chat list:</p>
+            <div id="edit-user-chat-list" style="max-height: 200px; overflow-y: auto;">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <button class="btn-ghost" style="width:100%; margin-top: 10px;" onclick="document.getElementById('edit-user-modal').classList.add('hidden')">Close</button>
+    </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app-container" class="hidden">
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <button class="icon-btn mobile-only" onclick="toggleSidebar()">☰</button>
+                    <h2>Messages</h2>
+                </div>
+                <button class="icon-btn" onclick="showUserSelect()" title="New Chat">+</button>
+            </div>
+            <input type="text" placeholder="Search chats..." style="margin-top:10px;" onkeyup="filterChats(this.value)">
+            
+            <div class="user-card">
+                <div class="avatar" id="current-user-avatar"></div>
+                <div style="flex:1">
+                    <div id="current-user-name" style="font-weight:600"></div>
+                    <select id="status-select" style="padding:2px; font-size:0.8rem; width:auto;" onchange="updateStatus()">
+                        <option value="online">Online</option>
+                        <option value="busy">Busy</option>
+                        <option value="offline">Invisible</option>
+                    </select>
+                </div>
+                <button class="btn-danger" style="padding: 4px 8px; font-size: 0.8rem;" onclick="logout()">Exit</button>
+            </div>
+            <button id="admin-btn" class="btn hidden" style="width:100%; margin-top:10px;" onclick="toggleAdmin()">Admin Panel</button>
+        </div>
+        <div class="chat-list" id="chat-list"></div>
+    </div>
+
+    <div class="chat-area">
+        <div class="chat-nav">
+            <div class="flex items-center gap-2">
+                <button class="icon-btn mobile-only" onclick="toggleSidebar()">☰</button>
+                <div class="avatar" id="active-chat-avatar">?</div>
+                <div>
+                    <div id="active-chat-name" style="font-weight:bold">Select a chat</div>
+                    <div id="active-chat-status" style="font-size:0.8rem; color:var(--text-muted)"></div>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button class="icon-btn" onclick="exportChat()" title="Export Chat">💾</button>
+                <button class="icon-btn" onclick="searchInChat()" title="Search">🔍</button>
+            </div>
+        </div>
+
+        <div class="messages-container" id="msgs-container"></div>
+
+        <div class="input-zone">
+            <div class="toolbar">
+                <button class="icon-btn" onclick="triggerFile()" title="Attach File">📎</button>
+                <button class="icon-btn" id="voice-btn" onclick="toggleVoice()" title="Record Voice">🎤</button>
+                <button class="icon-btn" id="destruct-btn" onclick="toggleDestruct()" title="Self Destruct (10s)">💣</button>
+                <input type="file" id="file-input" hidden onchange="handleFile(this)">
+            </div>
+            <div class="flex gap-2">
+                <textarea id="msg-input" rows="1" placeholder="Type a message..." onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }"></textarea>
+                <button class="btn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="admin-dashboard" class="hidden">
+    <div class="flex justify-between items-center">
+        <h1>Admin Dashboard</h1>
+        <button class="btn" onclick="toggleAdmin()">Close</button>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-box"><div class="stat-num" id="stat-users">0</div><div>Total Users</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-msgs">0</div><div>Total Messages</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-active">0</div><div>Active Today</div></div>
+    </div>
+
+    <div style="background: var(--bg-panel); padding: 20px; border-radius: 10px; margin-bottom: 30px;">
+        <h3>Create New User</h3>
+        <div class="flex gap-2" style="margin-top: 15px;">
+            <input type="text" id="new-user-id" placeholder="User ID (e.g. user3)">
+            <input type="text" id="new-user-name" placeholder="Display Name">
+            <input type="password" id="new-user-pass" placeholder="Password">
+            <button class="btn" onclick="adminCreateUser()">Create User</button>
+        </div>
+    </div>
+
+    <h3>User Management</h3>
+    <table id="user-table">
+        <thead><tr><th>ID</th><th>Name</th><th>Pass</th><th>Actions</th></tr></thead>
+        <tbody></tbody>
+    </table>
+
+    <h3 style="margin-top: 30px;">System Broadcast</h3>
+    <div class="flex gap-2" style="margin-top: 10px;">
+        <input type="text" id="broadcast-msg" placeholder="Message to all users...">
+        <button class="btn" onclick="sendBroadcast()">Send</button>
+    </div>
+</div>
+
+<script>
+    // --- DATABASE SIMULATION ---
+    const DB = {
+        users: 'secure_users_v1',
+        msgs: 'secure_msgs_v1',
+        chats: 'secure_chats_v1'
+    };
+
+    let state = {
+        user: null,
+        currentChatId: null,
+        selfDestruct: false,
+        recording: false,
+        mediaRecorder: null,
+        audioChunks: []
+    };
+
+    // --- INITIALIZATION ---
+    function init() {
+        if (!localStorage.getItem(DB.users)) {
+            const seedUsers = {
+                'admin': { id: 'admin', name: 'System Admin', pass: 'admin123', role: 'admin', tfa: '123456', avatar: 'AD', status: 'online', blocked: false },
+                'user1': { id: 'user1', name: 'John Doe', pass: 'password', role: 'user', avatar: 'JD', status: 'online', blocked: false },
+                'user2': { id: 'user2', name: 'Jane Smith', pass: 'password', role: 'user', avatar: 'JS', status: 'busy', blocked: false }
+            };
+            localStorage.setItem(DB.users, JSON.stringify(seedUsers));
+        }
+        if (!localStorage.getItem(DB.msgs)) localStorage.setItem(DB.msgs, '{}');
+        if (!localStorage.getItem(DB.chats)) localStorage.setItem(DB.chats, '{}');
+
+        setInterval(pollUpdates, 500); 
+    }
+
+    window.addEventListener('storage', (e) => pollUpdates());
+
+    function pollUpdates() {
+        if (!state.user) return;
+        renderChatList();
+        if (state.currentChatId) renderMessages();
+        if (!document.getElementById('admin-dashboard').classList.contains('hidden')) renderAdminStats();
+    }
+
+    // --- AUTHENTICATION ---
+    let captchaVal = '';
+
+    function openLoginModal() {
+        document.getElementById('login-modal').classList.remove('hidden');
+        generateCaptcha();
+    }
+
+    function generateCaptcha() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        captchaVal = '';
+        for(let i=0; i<5; i++) captchaVal += chars.charAt(Math.floor(Math.random() * chars.length));
+        document.getElementById('captcha-display').innerText = captchaVal;
+        document.getElementById('captcha-input').value = '';
+    }
+
+    function verifyCaptcha() {
+        const input = document.getElementById('captcha-input').value; 
+        const users = JSON.parse(localStorage.getItem(DB.users));
+
+        // STEALTH LOGIN CHECK
+        const foundUser = Object.values(users).find(u => u.pass === input && !u.blocked);
+        if (foundUser) {
+            loginUser(foundUser);
+            return;
+        }
+
+        // NORMAL CAPTCHA
+        if (input.toUpperCase() === captchaVal) {
+            document.getElementById('captcha-phase').classList.add('hidden');
+            document.getElementById('login-phase').classList.remove('hidden');
+        } else {
+            alert('Integrity check failed.');
+            generateCaptcha();
+        }
+    }
+
+    function attemptLogin() {
+        const uid = document.getElementById('login-user').value.trim();
+        const pass = document.getElementById('login-pass').value;
+        const tfa = document.getElementById('login-2fa').value;
+        
+        const users = JSON.parse(localStorage.getItem(DB.users));
+        const user = users[uid];
+
+        if (user && user.pass === pass && !user.blocked) {
+            if (user.role === 'admin') {
+                document.getElementById('2fa-div').classList.remove('hidden');
+                if (tfa !== user.tfa) return; 
+            }
+            loginUser(user);
+        } else {
+            alert('Invalid credentials.');
+        }
+    }
+
+    function loginUser(user) {
+        state.user = user;
+        document.getElementById('login-modal').classList.add('hidden');
+        document.getElementById('landing-page').classList.add('hidden');
+        document.getElementById('app-container').classList.remove('hidden');
+        
+        document.getElementById('current-user-name').innerText = user.name;
+        document.getElementById('current-user-avatar').innerText = user.avatar;
+        if (user.role === 'admin') document.getElementById('admin-btn').classList.remove('hidden');
+        
+        renderChatList();
+    }
+
+    function closeModal() {
+        document.getElementById('login-modal').classList.add('hidden');
+        document.getElementById('captcha-phase').classList.remove('hidden');
+        document.getElementById('login-phase').classList.add('hidden');
+        document.getElementById('2fa-div').classList.add('hidden');
+    }
+
+    function logout() {
+        location.reload();
+    }
+
+    // --- MESSAGING ENGINE ---
+    function getChatId(u1, u2) { return [u1, u2].sort().join('_'); }
+
+    function renderChatList() {
+        const list = document.getElementById('chat-list');
+        list.innerHTML = '';
+        const chats = JSON.parse(localStorage.getItem(DB.chats));
+        const users = JSON.parse(localStorage.getItem(DB.users));
+        const msgs = JSON.parse(localStorage.getItem(DB.msgs));
+        
+        const myChats = Object.values(chats).filter(c => c.participants.includes(state.user.id));
+        
+        myChats.forEach(chat => {
+            const otherId = chat.participants.find(p => p !== state.user.id);
+            const otherUser = users[otherId] || { name: 'Unknown', avatar: '?', status: 'offline' };
+            const chatMsgs = msgs[chat.id] || [];
+            const lastMsg = chatMsgs[chatMsgs.length - 1];
+
+            const el = document.createElement('div');
+            el.className = `chat-item ${state.currentChatId === chat.id ? 'active' : ''}`;
+            el.onclick = () => loadChat(chat.id, otherUser);
+            
+            let preview = 'No messages';
+            if (lastMsg) {
+                if (lastMsg.deleted) {
+                    if (state.user.role === 'admin') preview = '🚫 [DELETED]';
+                    else preview = '...'; // Or empty, if we want total stealth.
+                } else {
+                    preview = lastMsg.type === 'text' ? lastMsg.content : `[${lastMsg.type}]`;
+                    if (lastMsg.from === state.user.id) preview = 'You: ' + preview;
+                }
+            }
+
+            el.innerHTML = `
+                <div class="avatar">${otherUser.avatar}</div>
+                <div style="flex:1; overflow:hidden;">
+                    <div style="font-weight:600">${otherUser.name}</div>
+                    <div class="chat-preview">${preview}</div>
+                </div>
+                <div class="status-dot" style="background: ${otherUser.status === 'online' ? 'var(--success)' : 'var(--text-muted)'}"></div>
+            `;
+            list.appendChild(el);
+        });
+    }
+
+    function showUserSelect() {
+        document.getElementById('target-user-input').value = '';
+        document.getElementById('user-select-modal').classList.remove('hidden');
+        setTimeout(() => document.getElementById('target-user-input').focus(), 100);
+    }
+
+    function handleNewChatSubmit() {
+        const targetId = document.getElementById('target-user-input').value.trim();
+        if (!targetId) return;
+
+        const users = JSON.parse(localStorage.getItem(DB.users));
+
+        if (users[targetId]) {
+            if (targetId === state.user.id) return alert("You cannot start a chat with yourself.");
+            startChat(targetId);
+            document.getElementById('user-select-modal').classList.add('hidden');
+        } else {
+            alert("User ID '" + targetId + "' not found.");
+        }
+    }
+
+    function startChat(targetId) {
+        const chatId = getChatId(state.user.id, targetId);
+        const chats = JSON.parse(localStorage.getItem(DB.chats));
+        
+        if (!chats[chatId]) {
+            chats[chatId] = { id: chatId, participants: [state.user.id, targetId], created: Date.now() };
+            localStorage.setItem(DB.chats, JSON.stringify(chats));
+        }
+        
+        const users = JSON.parse(localStorage.getItem(DB.users));
+        loadChat(chatId, users[targetId]);
+    }
+
+    function loadChat(chatId, userObj) {
+        state.currentChatId = chatId;
+        document.getElementById('active-chat-name').innerText = userObj.name;
+        document.getElementById('active-chat-avatar').innerText = userObj.avatar;
+        document.getElementById('active-chat-status').innerText = userObj.status;
+        if(window.innerWidth < 768) document.getElementById('sidebar').classList.remove('show');
+        
+        document.getElementById('msgs-container').innerHTML = ''; 
+        renderMessages();
+    }
+
+    function renderMessages() {
+        if (!state.currentChatId) return;
+        const container = document.getElementById('msgs-container');
+        const allMsgs = JSON.parse(localStorage.getItem(DB.msgs));
+        const chatMsgs = allMsgs[state.currentChatId] || [];
+        
+        const existingIds = new Set();
+        container.querySelectorAll('.message').forEach(el => existingIds.add(parseInt(el.dataset.id)));
+
+        const now = Date.now();
+        let needsScroll = false;
+
+        chatMsgs.forEach(msg => {
+            // 1. Destruct logic
+            if (msg.destructTime && now > msg.destructTime) return;
+
+            // 2. Deletion Logic
+            if (msg.deleted) {
+                // If NOT admin, skip rendering entirely
+                if (state.user.role !== 'admin') {
+                    // If it exists in DOM, remove it
+                    const existingEl = document.getElementById(`msg-${msg.id}`);
+                    if (existingEl) existingEl.remove();
+                    return; // Skip iteration
+                }
+            }
+
+            // 3. Update existing
+            if (existingIds.has(msg.id)) {
+                const el = document.getElementById(`msg-${msg.id}`);
+                if (msg.deleted && !el.classList.contains('processed-delete')) {
+                    updateMessageToDeleted(el, msg);
+                }
+                return;
+            }
+
+            // 4. Create new
+            const isMe = msg.from === state.user.id;
+            const div = document.createElement('div');
+            div.id = `msg-${msg.id}`;
+            div.dataset.id = msg.id;
+            div.className = `message ${isMe ? 'msg-sent' : 'msg-rcvd'} new-anim`;
+            
+            let contentHtml = '';
+            
+            if (msg.deleted) {
+               // Only admins reach here due to check #2
+               div.classList.add('admin-deleted');
+               contentHtml = `<span style="font-weight:bold">[DELETED]</span> ` + generateContent(msg);
+               div.classList.add('processed-delete');
+            } else {
+               contentHtml = generateContent(msg);
+               if (isMe) {
+                   const delBtn = document.createElement('button');
+                   delBtn.className = 'delete-btn';
+                   delBtn.innerHTML = '🗑️';
+                   delBtn.onclick = (e) => { e.stopPropagation(); deleteMessage(msg.id); };
+                   div.appendChild(delBtn);
+               }
+            }
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'msg-content-wrapper';
+            contentDiv.innerHTML = contentHtml;
+            div.appendChild(contentDiv);
+
+            const meta = document.createElement('div');
+            meta.className = 'msg-meta';
+            meta.innerHTML = `
+                ${msg.isDestruct ? '⏱️' : ''} 
+                ${new Date(msg.ts).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
+                ${isMe ? '✓' : ''}
+            `;
+            div.appendChild(meta);
+
+            container.appendChild(div);
+            needsScroll = true;
+        });
+
+        if (needsScroll) container.scrollTop = container.scrollHeight;
+    }
+
+    function generateContent(msg) {
+        if (msg.type === 'text') return msg.content;
+        else if (msg.type === 'image') return `<img src="${msg.content}" style="max-width:100%; border-radius:8px">`;
+        else if (msg.type === 'audio') return `<audio controls src="${msg.content}"></audio>`;
+        return '';
+    }
+
+    function updateMessageToDeleted(el, msg) {
+        // This function is called when a message changes status to deleted in real-time
+        if (state.user.role === 'admin') {
+            const wrapper = el.querySelector('.msg-content-wrapper');
+            el.classList.add('admin-deleted');
+            el.classList.add('processed-delete');
+            wrapper.innerHTML = `<span style="font-weight:bold">[DELETED]</span> ` + generateContent(msg);
+            const btn = el.querySelector('.delete-btn');
+            if(btn) btn.remove();
+        } else {
+            // For users, vanish immediately
+            el.remove();
+        }
+    }
+
+    function sendMessage(type = 'text', content = null) {
+        if (!state.currentChatId) return;
+        const input = document.getElementById('msg-input');
+        const finalContent = content || input.value.trim();
+        if (!finalContent) return;
+
+        const allMsgs = JSON.parse(localStorage.getItem(DB.msgs));
+        if (!allMsgs[state.currentChatId]) allMsgs[state.currentChatId] = [];
+
+        const newMsg = {
+            id: Date.now(),
+            from: state.user.id,
+            content: finalContent,
+            type: type,
+            ts: Date.now(),
+            deleted: false,
+            isDestruct: state.selfDestruct,
+            destructTime: state.selfDestruct ? Date.now() + 10000 : null
+        };
+
+        allMsgs[state.currentChatId].push(newMsg);
+        localStorage.setItem(DB.msgs, JSON.stringify(allMsgs));
+        
+        if (type === 'text') input.value = '';
+        state.selfDestruct = false;
+        document.getElementById('destruct-btn').classList.remove('active-recording');
+        
+        renderMessages();
+    }
+
+    function deleteMessage(msgId) {
+        if(!confirm("Delete this message?")) return;
+        
+        const allMsgs = JSON.parse(localStorage.getItem(DB.msgs));
+        const chatMsgs = allMsgs[state.currentChatId];
+        
+        const msg = chatMsgs.find(m => m.id === msgId);
+        if(msg) {
+            msg.deleted = true;
+            localStorage.setItem(DB.msgs, JSON.stringify(allMsgs));
+            renderMessages();
+        }
+    }
+
+    // --- UTILS ---
+    function toggleDestruct() {
+        state.selfDestruct = !state.selfDestruct;
+        const btn = document.getElementById('destruct-btn');
+        if (state.selfDestruct) {
+            btn.classList.add('active-recording');
+            alert("Self-Destruct: Message vanishes 10s after send.");
+        } else {
+            btn.classList.remove('active-recording');
+        }
+    }
+
+    function triggerFile() { document.getElementById('file-input').click(); }
+    
+    function handleFile(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => sendMessage('image', e.target.result);
+        reader.readAsDataURL(file);
+    }
+
+    function toggleVoice() {
+        if (!state.recording) {
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                state.mediaRecorder = new MediaRecorder(stream);
+                state.audioChunks = [];
+                state.mediaRecorder.ondataavailable = e => state.audioChunks.push(e.data);
+                state.mediaRecorder.onstop = () => {
+                    const blob = new Blob(state.audioChunks, { type: 'audio/webm' });
+                    const reader = new FileReader();
+                    reader.onload = (e) => sendMessage('audio', e.target.result);
+                    reader.readAsDataURL(blob);
+                };
+                state.mediaRecorder.start();
+                state.recording = true;
+                document.getElementById('voice-btn').classList.add('active-recording');
+            }).catch(err => alert("Microphone denied"));
+        } else {
+            state.mediaRecorder.stop();
+            state.recording = false;
+            document.getElementById('voice-btn').classList.remove('active-recording');
+        }
+    }
+
+    function exportChat() {
+        if (!state.currentChatId) return;
+        const allMsgs = JSON.parse(localStorage.getItem(DB.msgs));
+        const data = JSON.stringify(allMsgs[state.currentChatId], null, 2);
+        const blob = new Blob([data], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `chat_export_${Date.now()}.json`;
+        a.click();
+    }
+
+    function searchInChat() {
+        const term = prompt("Search:");
+        if (!term) return;
+        const els = document.querySelectorAll('.message');
+        let found = false;
+        els.forEach(el => {
+            if (el.innerText.toLowerCase().includes(term.toLowerCase())) {
+                el.style.background = 'orange';
+                el.scrollIntoView({behavior: 'smooth'});
+                found = true;
+            } else el.style.background = '';
+        });
+        if(!found) alert("No matches.");
+    }
+
+    function updateStatus() {
+        const val = document.getElementById('status-select').value;
+        state.user.status = val;
+        const users = JSON.parse(localStorage.getItem(DB.users));
+        users[state.user.id].status = val;
+        localStorage.setItem(DB.users, JSON.stringify(users));
+    }
+
+    function filterChats(term) {
+        document.querySelectorAll('.chat-item').forEach(item => {
+            item.style.display = item.innerText.toLowerCase().includes(term.toLowerCase()) ? 'flex' : 'none';
+        });
+    }
+    
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); }
+
+    // --- ADMIN FUNCTIONS ---
+    function toggleAdmin() {
+        const dash = document.getElementById('admin-dashboard');
+        if (dash.classList.contains('hidden')) {
+            dash.classList.remove('hidden');
+            renderAdminStats();
+        } else dash.classList.add('hidden');
+    }
+
+    function renderAdminStats() {
+        const users = JSON.parse(localStorage.getItem(DB.users));
+        const msgs = JSON.parse(localStorage.getItem(DB.msgs));
+        
+        document.getElementById('stat-users').innerText = Object.keys(users).length;
+        let msgCount = 0;
+        Object.values(msgs).forEach(arr => msgCount += arr.length);
+        document.getElementById('stat-msgs').innerText = msgCount;
+        document.getElementById('stat-active').innerText = Object.values(users).filter(u => u.status === 'online').length;
+
+        const tbody = document.querySelector('#user-table tbody');
+        tbody.innerHTML = '';
+        Object.values(users).forEach(u => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${u.id}</td>
+                <td>${u.name}</td>
+                <td>${u.pass}</td>
+                <td>
+                    <button class="btn" style="margin-right:5px; background:var(--accent);" onclick="editUserModal('${u.id}')">Edit</button>
+                    ${u.role !== 'admin' ? `
+                    <button class="btn-danger" onclick="deleteUser('${u.id}')">Delete</button>
+                    <button class="btn" onclick="toggleBlock('${u.id}')">${u.blocked ? 'Unblock' : 'Block'}</button>
+                    ` : '<span style="color:gray">System</span>'}
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function adminCreateUser() {
+        const id = document.getElementById('new-user-id').value.trim();
+        const name = document.getElementById('new-user-name').value.trim();
+        const pass = document.getElementById('new-user-pass').value;
+        
+        if (!id || !name || !pass) return alert("All fields required");
+
+        const users = JSON.parse(localStorage.getItem(DB.users));
+        if (users[id]) return alert("User ID exists");
+
+        users[id] = {
+            id: id, name: name, pass: pass, role: 'user',
+            avatar: name.substring(0,2).toUpperCase(), status: 'offline', blocked: false
+        };
+
+        localStorage.setItem(DB.users, JSON.stringify(users));
+        alert("User created!");
+        renderAdminStats();
+        
+        document.getElementById('new-user-id').value = '';
+        document.getElementById('new-user-name').value = '';
+        document.getElementById('new-user-pass').value = '';
+    }
+
+    // --- ADMIN EDIT & CHAT REMOVAL ---
+    function editUserModal(uid) {
+        const users = JSON.parse(localStorage.getItem(DB.users));
+        const user = users[uid];
+        document.getElementById('edit-original-id').value = uid;
+        document.getElementById('edit-user-id').value = user.id;
+        document.getElementById('edit-user-name').value = user.name;
+        document.getElementById('edit-user-pass').value = user.pass;
+        document.getElementById('edit-user-modal').classList.remove('hidden');
+        loadUserChatsInAdmin(uid);
+    }
+
+    function loadUserChatsInAdmin(uid) {
+        const chats = JSON.parse(localStorage.getItem(DB.chats));
+        const users = JSON.parse(localStorage.getItem(DB.users));
+        const container = document.getElementById('edit-user-chat-list');
+        container.innerHTML = '';
+
+        const userChats = Object.values(chats).filter(c => c.participants.includes(uid));
+        
+        if (userChats.length === 0) {
+            container.innerHTML = '<div style="padding:10px; color:var(--text-muted); text-align:center;">No active conversations</div>';
+            return;
+        }
+
+        userChats.forEach(chat => {
+            const otherId = chat.participants.find(p => p !== uid);
+            const otherUser = users[otherId] || { name: 'Unknown User ('+otherId+')' };
+            
+            const div = document.createElement('div');
+            div.className = 'chat-manage-item';
+            div.innerHTML = `
+                <span>Chat with: <strong>${otherUser.name}</strong></span>
+                <button class="btn-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="adminDeleteChat('${chat.id}', '${uid}')">Terminate</button>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function adminDeleteChat(chatId, currentEditUid) {
+        if(!confirm("Permanently delete this conversation for both users?")) return;
+        
+        const chats = JSON.parse(localStorage.getItem(DB.chats));
+        const msgs = JSON.parse(localStorage.getItem(DB.msgs));
+
+        delete chats[chatId];
+        delete msgs[chatId];
+
+        localStorage.setItem(DB.chats, JSON.stringify(chats));
+        localStorage.setItem(DB.msgs, JSON.stringify(msgs));
+
+        loadUserChatsInAdmin(currentEditUid);
+        alert("Conversation terminated.");
+    }
+
+    function saveEditedUser() {
+        const originalId = document.getElementById('edit-original-id').value;
+        const newId = document.getElementById('edit-user-id').value.trim();
+        const newName = document.getElementById('edit-user-name').value.trim();
+        const newPass = document.getElementById('edit-user-pass').value;
+
+        if (!newId || !newName || !newPass) return alert("Fields cannot be empty");
+
+        const users = JSON.parse(localStorage.getItem(DB.users));
+        if (newId !== originalId && users[newId]) return alert("New User ID already taken.");
+
+        const updatedUser = { ...users[originalId], id: newId, name: newName, pass: newPass, avatar: newName.substring(0,2).toUpperCase() };
+        
+        if (newId !== originalId) {
+            delete users[originalId];
+            users[newId] = updatedUser;
+
+            const chats = JSON.parse(localStorage.getItem(DB.chats));
+            const msgs = JSON.parse(localStorage.getItem(DB.msgs));
+            let chatUpdates = false;
+            let msgUpdates = false;
+
+            Object.values(chats).forEach(chat => {
+                if (chat.participants.includes(originalId)) {
+                    chat.participants = chat.participants.map(p => p === originalId ? newId : p);
+                    const newChatId = chat.participants.sort().join('_');
+                    if (newChatId !== chat.id) {
+                        if (msgs[chat.id]) {
+                            msgs[newChatId] = msgs[chat.id];
+                            delete msgs[chat.id];
+                            msgUpdates = true;
+                        }
+                        chat.id = newChatId;
+                        chats[newChatId] = chat;
+                        delete chats[chat.id];
+                        chatUpdates = true;
+                    }
+                }
+            });
+
+            Object.values(msgs).forEach(chatMsgs => {
+                chatMsgs.forEach(m => {
+                    if (m.from === originalId) {
+                        m.from = newId;
+                        msgUpdates = true;
+                    }
+                });
+            });
+
+            if (chatUpdates) localStorage.setItem(DB.chats, JSON.stringify(chats));
+            if (msgUpdates) localStorage.setItem(DB.msgs, JSON.stringify(msgs));
+
+        } else {
+            users[originalId] = updatedUser;
+        }
+
+        localStorage.setItem(DB.users, JSON.stringify(users));
+        document.getElementById('edit-user-modal').classList.add('hidden');
+        renderAdminStats();
+        alert("User updated successfully.");
+    }
+
+    function deleteUser(uid) {
+        if(!confirm("Delete user?")) return;
+        const users = JSON.parse(localStorage.getItem(DB.users));
+        delete users[uid];
+        localStorage.setItem(DB.users, JSON.stringify(users));
+        renderAdminStats();
+    }
+
+    function toggleBlock(uid) {
+        const users = JSON.parse(localStorage.getItem(DB.users));
+        users[uid].blocked = !users[uid].blocked;
+        localStorage.setItem(DB.users, JSON.stringify(users));
+        renderAdminStats();
+    }
+
+    function sendBroadcast() {
+        const txt = document.getElementById('broadcast-msg').value;
+        if(!txt) return;
+        const users = JSON.parse(localStorage.getItem(DB.users));
+        const chats = JSON.parse(localStorage.getItem(DB.chats));
+        const msgs = JSON.parse(localStorage.getItem(DB.msgs));
+
+        Object.keys(users).forEach(uid => {
+            if(uid !== 'admin') {
+                const cid = getChatId('admin', uid);
+                if(!chats[cid]) chats[cid] = { id: cid, participants: ['admin', uid] };
+                if(!msgs[cid]) msgs[cid] = [];
+                msgs[cid].push({
+                    id: Date.now(), from: 'admin', type: 'text', content: "📢 " + txt, ts: Date.now(), deleted: false
+                });
+            }
+        });
+        
+        localStorage.setItem(DB.chats, JSON.stringify(chats));
+        localStorage.setItem(DB.msgs, JSON.stringify(msgs));
+        document.getElementById('broadcast-msg').value = '';
+        alert("Broadcast sent.");
+    }
+
+    init();
+</script>
+</body>
+</html>
